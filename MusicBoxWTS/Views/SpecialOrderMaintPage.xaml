@@ -1,0 +1,95 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    x:Class="MusicBoxWTS.Views.SpecialOrderMaintPage"
+    Style="{StaticResource PageStyle}"
+    xmlns:model="using:MusicBoxWTS.Core.Models"
+    xmlns:helpers="using:MusicBoxWTS.Helpers"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <helpers:DollarAmountConverter x:Key="DollarAmountConverter"/>
+        <helpers:DateConverter x:Key="DateConverter"/>
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+        <Grid
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <Image Source="/Assets/musicboxLogo1.png" Opacity="0.1" Stretch="Fill"/>
+            <controls:DataGrid x:Name="SOProdGrid"
+                AutoGenerateColumns="False"
+                GridLinesVisibility="Horizontal"
+                AlternatingRowBackground="LightGray"
+                ItemsSource="{x:Bind SOMaintSource, Mode=OneWay}" Margin="10,10,10,400" ScrollViewer.HorizontalScrollBarVisibility="Visible" MaxWidth="2000" MaxHeight="500" SelectionChanged="SOProdGrid_SelectionChanged">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Binding="{Binding SOId}" Header="Special Order ID" Visibility="Collapsed" />
+                    <controls:DataGridTextColumn Binding="{Binding SODate, Converter={StaticResource DateConverter}}" Header="SO Date" />
+                    <controls:DataGridTextColumn Binding="{Binding SOStatus}" Header="Status" />
+                    <controls:DataGridTextColumn Binding="{Binding SOCloseDate, Converter={StaticResource DateConverter}}" Header="SO Close Date" />
+                    <controls:DataGridTextColumn Binding="{Binding CustName}" Header="Name" />
+                    <controls:DataGridTextColumn Binding="{Binding CustAddr}" Header="Address" />
+                    <controls:DataGridTextColumn Binding="{Binding CustPhone}" Header="Phone" />
+                    <controls:DataGridTextColumn Binding="{Binding CustEmail}" Header="Email" />
+                </controls:DataGrid.Columns>
+                <controls:DataGrid.RowStyle>
+                    <Style TargetType="controls:DataGridRow">
+                        <Setter Property="controls:DataGridRow.ContextFlyout">
+                            <Setter.Value>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Update Status" Icon="Delete" Click="SOMaintMenuFlyoutItem_UpdateStatus" />
+                                </MenuFlyout>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:DataGrid.RowStyle>
+            </controls:DataGrid>
+            <ComboBox x:Name="cbStatus" SelectedIndex="0" ItemsSource="{x:Bind Path=soStatusList}" Margin="0,427,0,0" Width="200" TabIndex="200" SelectionChanged="cbStatus_SelectionChanged" HorizontalAlignment="Center"/>
+            <controls:DataGrid x:Name="SOMPProdGrid"
+                    AutoGenerateColumns="False"
+                    GridLinesVisibility="Horizontal"
+                    AlternatingRowBackground="LightGray"
+                    ItemsSource="{x:Bind SOMaintProdSource, Mode=OneWay}" Margin="100,500,382,32" ScrollViewer.HorizontalScrollBarVisibility="Visible" MaxWidth="800">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Binding="{Binding ProdId}" Header="Product ID" Visibility="Collapsed" />
+                    <controls:DataGridTextColumn Binding="{Binding ProdArtistName}" Header="Artist Name" />
+                    <controls:DataGridTextColumn Binding="{Binding ProdTitle}" Header="Title" />
+                    <controls:DataGridTextColumn Binding="{Binding ProdDesc}" Header="Description" />
+                    <controls:DataGridTextColumn Binding="{Binding ProdPrice, Converter={StaticResource DollarAmountConverter}}" Header="Price" >
+                        <controls:DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </controls:DataGridTextColumn.ElementStyle>
+                    </controls:DataGridTextColumn>
+                    <controls:DataGridTextColumn Binding="{Binding ProdType}" Header="Type" />
+                </controls:DataGrid.Columns>
+                <!--<controls:DataGrid.RowStyle>
+                    <Style TargetType="controls:DataGridRow">
+                        <Setter Property="controls:DataGridRow.ContextFlyout">
+                            <Setter.Value>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Remove" Icon="Delete" Click="ProdMenuFlyoutItem_Remove" />
+                                </MenuFlyout>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:DataGrid.RowStyle>-->
+            </controls:DataGrid>
+
+            <Popup Name="puUpdateStatus" Width="500" Height="200" IsOpen="False" IsLightDismissEnabled="True" RelativePanel.AlignRightWithPanel="True" Opened="puUpdateStatus_Opened" >
+                <Popup.ChildTransitions>
+                    <TransitionCollection>
+                        <PaneThemeTransition Edge="Right"/>
+                    </TransitionCollection>
+                </Popup.ChildTransitions>
+                <StackPanel x:Name="updateStatusPanel" Background="WhiteSmoke" Height="{Binding ElementName=puUpdateStatus, Path=Height}" Width="{Binding ElementName=puUpdateStatus, Path=Width}">
+                    <RadioButton Name="rbSOpen" Margin="10,5,0,0" GroupName="RBGroupStatus" Click="radioButton_Clicked" >Open</RadioButton>
+                    <RadioButton Name="rbSClosed"  Margin="10,5,0,0" GroupName="RBGroupStatus" Click="radioButton_Clicked" >Closed</RadioButton>
+                    <RadioButton Name="rbSCancelled" Margin="10,5,0,0" GroupName="RBGroupStatus" Click="radioButton_Clicked" >Cancelled</RadioButton>
+                </StackPanel>
+            </Popup>
+        </Grid>
+    </Grid>
+</Page>

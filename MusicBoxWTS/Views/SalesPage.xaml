@@ -1,0 +1,72 @@
+﻿<Page
+    x:Class="MusicBoxWTS.Views.SalesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    Style="{StaticResource PageStyle}"
+    xmlns:model="using:MusicBoxWTS.Core.Models"
+    xmlns:helpers="using:MusicBoxWTS.Helpers"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <helpers:DollarAmountConverter x:Key="DollarAmountConverter"/>
+        <helpers:DateConverter x:Key="DateConverter"/>
+    </Page.Resources>
+    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+        <Grid x:Name="gridMain"
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <Image Source="/Assets/musicboxLogo1.png" Opacity="0.1" Stretch="Fill"/>
+            <TextBox x:Name="tbSalesAmount" HorizontalAlignment="Left" Margin="634,63,0,0" Text="0.00" TextWrapping="Wrap" VerticalAlignment="Top" Width="137" InputScope="CurrencyAmountAndSymbol" TextChanged="tbSalesAmount_TextChanged"/>
+            <TextBlock x:Name="tSalesDate" HorizontalAlignment="Left" Margin="79,64,0,0" Text="Date:" TextWrapping="Wrap" VerticalAlignment="Top"/>
+            <DatePicker x:Name="dpSalesDate" Margin="137,63,0,0" VerticalAlignment="Top" SelectedDate="{Binding SelectedDate.Value.UtcNow, ElementName=dpSalesDate, Mode=OneWay}"/>
+            <TextBlock x:Name="tSalesAmount" HorizontalAlignment="Left" Height="28" Margin="516,69,0,0" Text="Sales Amount:" TextWrapping="Wrap" VerticalAlignment="Top" Width="114"/>
+            <TextBlock x:Name="tNotes" HorizontalAlignment="Left" Margin="70,134,0,0" Text="Notes:" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="-0.185,0"/>
+            <TextBox x:Name="tbNotes" HorizontalAlignment="Left" Margin="137,134,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" InputScope="Text" Height="162" Width="936" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <Button x:Name="btnSubmit" Margin="516,317,0,0" Visibility="Visible" Content="Save" VerticalAlignment="Top" Click="btnSubmit_Click" Width="167" IsEnabled="False"/>
+        </Grid>
+        <Grid>
+            <controls:DataGrid x:Name="SalesGrid"
+                AutoGenerateColumns="False"
+                CanUserSortColumns="True"
+                GridLinesVisibility="Horizontal"
+                AlternatingRowBackground="LightGray"
+                Sorting="dg_SortSales"
+                ItemsSource="{x:Bind SalesSource, Mode=OneWay}" Margin="138,386,250,32" ScrollViewer.HorizontalScrollBarVisibility="Visible" RightTapped="SalesGrid_RightTapped">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Binding="{Binding SalesId}" Header="Sales ID" Visibility="Collapsed" CanUserSort="True" Tag="Sales ID" />
+                    <controls:DataGridTextColumn Binding="{Binding SalesDate, Converter={StaticResource DateConverter}}" Header="Sales Date" CanUserSort="True" Tag="Sales Date" SortDirection="Ascending"/>
+                    <controls:DataGridTextColumn Binding="{Binding SalesAmt, Converter={StaticResource DollarAmountConverter}}" Header="Sales Amount" CanUserSort="True" Tag="Sales Amount">
+                        <controls:DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right" />
+                            </Style>
+                        </controls:DataGridTextColumn.ElementStyle>
+                    </controls:DataGridTextColumn>
+                    <controls:DataGridTextColumn Binding="{Binding SalesNotes}" Header="Notes" CanUserSort="True" Tag="Notes">
+                        <controls:DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                <Setter Property="MaxWidth" Value="500"/>
+                            </Style>
+                        </controls:DataGridTextColumn.ElementStyle>
+                    </controls:DataGridTextColumn>
+                    <controls:DataGridTextColumn Binding="{Binding User}" Header="User" CanUserSort="True" Tag="User"/>
+                </controls:DataGrid.Columns>
+                <controls:DataGrid.RowStyle>
+                    <Style TargetType="controls:DataGridRow">
+                        <Setter Property="controls:DataGridRow.ContextFlyout">
+                            <Setter.Value>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="Copy" Icon="Copy" Click="MenuFlyoutItem_Copy" />
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem Text="Delete" Icon="Delete" Click="MenuFlyoutItem_Delete" />
+                                </MenuFlyout>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:DataGrid.RowStyle>
+            </controls:DataGrid>
+        </Grid>
+    </Grid>
+</Page>
